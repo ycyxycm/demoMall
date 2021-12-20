@@ -1,0 +1,64 @@
+{% extends 'mybook/base1.html' %}
+{% block base1 %}
+	<div class="search_bar clearfix">
+		<a href="index.html" class="logo fl"><img src="../../static/mybook/images/logo02.png"></a>
+		<div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;用户中心</div>
+	</div>
+	<div class="main_con clearfix">
+		<div class="left_menu_con clearfix">
+			<h3>用户中心</h3>
+			<ul>
+				<li><a href="{% url 'mybook_usercenterinfo' %}">· 个人信息</a></li>
+				<li><a href="{% url 'mybook_orderlist' %}" >· 全部订单</a></li>
+				<li><a href="{% url 'mybook_receaddress' %}" class="active">· 收货地址</a></li>
+			</ul>
+		</div>
+		<div class="right_content clearfix">
+				<h3 class="common_title2">收货地址</h3>
+                {% for i in data %}
+				<div class="site_con">
+					<dl>
+						<dt>地址：</dt>
+						<dd>{{i.receaddress}} （{{ i.recename }} 收） 收货电话:{{i.recephone}}
+                            <span style="float: right;width: 100px;">
+                                <input class="checkboxall" type="checkbox">
+                                <input type="hidden" name="cartid"  value="{{ i.id }}">
+                            </span></dd>
+					</dl>					
+				</div>
+                {% endfor %}
+				<h3 class="common_title2">编辑地址</h3>
+				<div class="site_con">
+					<form action="{% url 'mybook_receaddress' %}" method="post">
+                        {% csrf_token %}
+						<div class="form_group">
+							<label>收件人：</label>
+							<input type="text" name="recename">
+						</div>
+						<div class="form_group form_group2">
+							<label>收货地址：</label>
+							<textarea name="receaddress" class="site_area"></textarea>
+						</div>
+						<div class="form_group">
+							<label>收货手机：</label>
+							<input type="text" name="recephone">
+						</div>
+						<input type="submit" name="" value="提交" class="info_submit">
+					</form>
+				</div>
+		</div>
+	</div>
+    <script>
+        $('.checkboxall').click(function (){
+            $('input[type=checkbox]').prop('checked',false)
+            $(this).prop('checked',true)
+
+            var data={}
+            data['receid']=$(this).next().val()
+            //发送ajax请求
+            $.get('{% url 'mybook_upreceselect' %}',data,function (data){
+                alert("code:"+data.code+"   "+data.msg)
+            },'json')
+        })
+    </script>
+{% endblock %}

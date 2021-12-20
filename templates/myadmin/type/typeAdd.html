@@ -1,0 +1,31 @@
+{% extends 'myadmin/base.html' %}
+{% block con %}
+    <form action="{% url 'type_add' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+<ul class="ulColumn2">
+       <li>
+        <span class="item_name"  style="width:120px;">图书分类:</span>
+        <select name="fid" class="select">
+         <option value="0">顶级类</option>
+            {% for i in data %}
+                <option value="{{ i.id }}">{{ i.typename }}</option>
+            {% endfor %}
+        </select>
+       </li>
+       <li>
+        <span class="item_name"  style="width:120px;">图书类名:</span>
+        <input type="text" class="textbox textbox_225" name="typename" placeholder="图书类名"/>
+        <span></span>
+       </li>
+       <li>
+        <span class="item_name" style="width:120px;"></span>
+        <input type="submit" class="link_btn" value="保存"/>
+       </li>
+      </ul>
+    </form>
+    <script>
+$(".imgInput").change(function(){
+ $(".img").attr("src",URL.createObjectURL($(this)[0].files[0]));
+});
+</script>
+{% endblock %}

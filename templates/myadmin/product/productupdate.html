@@ -1,0 +1,64 @@
+{% extends 'myadmin/base.html' %}
+{% block con %}
+    <form action="{% url 'product_update' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+<ul class="ulColumn2">
+       <li>
+        <span class="item_name" style="width:120px;" >图书编号：</span>
+        <input type="text" class="textbox textbox_225" name="id" value="{{data.id}}" readonly="readonly"  placeholder="图书书名..."/>
+       </li>
+       <li>
+        <span class="item_name" style="width:120px;">图书书名：</span>
+        <input type="text" class="textbox textbox_225" name="bkname" value="{{ data.bkname }}"  placeholder="图书书名..."/>
+       </li>
+       <li>
+        <span class="item_name" style="width:120px;">图书推荐语：</span>
+        <input type="text" class="textbox textbox_225" name="bkreco" value="{{ data.bkreco }}"  placeholder="图书推荐语..."/>
+       </li>
+       <li>
+        <span class="item_name" style="width:120px;">图书简介：</span>
+        <textarea style="resize:none;height: 120px" class="textbox textbox_225" name="bkbrief" placeholder="图书简介..." >{{ data.bkbrief }}</textarea>
+       </li>
+       <li>
+        <span class="item_name"  style="width:120px;">图书分类：</span>
+           <label>
+               <select multiple="multiple" name="bktypeid" class="select">
+                   {% for i in data_list %}
+                       {% for y in data.bktypeid.all %}
+                        <option {% if i.id == y.id %}
+                        selected
+                       {% endif %}  value={{ i.id }}>{{ i.sj }}{{ i.typename }}</option>
+                       {% endfor %}
+                   {% endfor %}
+               </select>
+           </label>
+       </li>
+       <li>
+        <span class="item_name"  style="width:120px;">作者：</span>
+        <input type="text" class="textbox textbox_225" name="bkauthor" value="{{ data.bkauthor }}"  placeholder="作者..."/>
+       </li>
+       <li>
+        <span class="item_name"  style="width:120px;">出版社：</span>
+        <input type="text" class="textbox textbox_225" name="bkpress"  value="{{ data.bkpress }}" placeholder="出版社..."/>
+       </li>
+       <li>
+        <span class="item_name"  style="width:120px;">出版时间：</span>
+        <input type="date" class="textbox textbox_225" name="bktime" value="{{ data.bktime|date:'Y-m-d'  }}" placeholder="出版时间..."/>
+       </li>
+       <li>
+        <span class="item_name"  style="width:120px;">价格：</span>
+        <input type="text" class="textbox textbox_225" name="bkprice" value="{{ data.bkprice }}" placeholder="价格..."/>
+        <span></span>
+       </li>
+       <li>
+        <span class="item_name" style="width:120px;"></span>
+        <input type="submit" class="link_btn" value="更新/保存"/>
+       </li>
+      </ul>
+    </form>
+    <script>
+$(".imgInput").change(function(){
+ $(".img").attr("src",URL.createObjectURL($(this)[0].files[0]));
+});
+</script>
+{% endblock %}

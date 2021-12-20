@@ -1,0 +1,59 @@
+{% extends 'myadmin/base.html' %}
+{% block con %}
+    <form action="{% url 'meber_add' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+<ul class="ulColumn2">
+       <li>
+        <span class="item_name" style="width:120px;">上传头像：</span>
+        <img src="/static/myadmin/images/face/default.jpg" style="width: 120px;" class="img">
+        <label class="uploadImg">
+         <input type="file" name="face" class="imgInput"/>
+         <span>上传头像</span>
+        </label>
+       </li>
+       <li>
+        <span class="item_name" style="width:120px;">会员昵称：</span>
+        <input type="text" class="textbox textbox_225" name="nikename"  placeholder="会员账号..."/>
+        <span class="errorTips">错误提示信息...</span>
+       </li>
+       <li>
+        <span class="item_name" style="width:120px;">登陆密码：</span>
+        <input type="password" class="textbox textbox_225" name="password"  placeholder="会员密码..."/>
+        <span class="errorTips">错误提示信息...</span>
+       </li>
+       <li>
+        <span class="item_name"  style="width:120px;">身份类型：</span>
+        <select name="usertype" class="select">
+         <option>群众</option>
+         <option>团员</option>
+         <option>党员</option>
+        </select>
+       </li>
+       <li>
+        <span class="item_name"  style="width:120px;">性别：</span>
+           <input type="radio" name="sex" value="1"  checked="checked" />男
+           <input type="radio" name="sex" value="0" />女
+        <span class="errorTips">错误提示信息...</span>
+       </li>
+       <li>
+        <span class="item_name"  style="width:120px;">手机号码：</span>
+        <input type="tel" class="textbox textbox_225" name="phone"  placeholder="手机号码..."/>
+        <span class="errorTips">错误提示信息...</span>
+       </li>
+       <li>
+        <span class="item_name"  style="width:120px;">家庭住址：</span>
+        <input type="text" class="textbox textbox_225" name="homeaddress" placeholder="家庭住址"/>
+        <span></span>
+       </li>
+       <li>
+        <span class="item_name" style="width:120px;"></span>
+        <input type="submit" class="link_btn" value="更新/保存"/>
+       </li>
+      </ul>
+    </form>
+    <script>
+$(".imgInput").change(function(){
+ $(".img").attr("src",URL.createObjectURL($(this)[0].files[0]));
+});
+</script>
+{% endblock %}

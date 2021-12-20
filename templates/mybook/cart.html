@@ -1,0 +1,132 @@
+{% extends 'mybook/base1.html' %}
+{% block base1 %}
+	<div class="total_count">全部商品<em>2</em>件</div>	
+	<ul class="cart_list_th clearfix">
+		<li class="col01">图书名称</li>
+		<li class="col02">图书作者</li>
+		<li class="col03">图书价格</li>
+		<li class="col04">数量</li>
+		<li class="col05">小计</li>
+		<li class="col06">操作</li>
+	</ul>
+    {% for i in data %}
+	<ul class="cart_list_td clearfix">
+		<li class="col01"><input type="checkbox" name="checked_dj" {% if i.select == 1 %}checked{% endif %} ><input type="hidden" name="cartid" value="{{ i.id }}"></li>
+		<li class="col02"><img src="{{ i.bid.booksimgs_set.first.imgurl }}"></li>
+		<li class="col03">{{i.bid.bkname}}<br></li>
+		<li class="col04">{{ i.bid.bkauthor }}</li>
+		<li class="col05" id="price">{{ i.bid.bkprice }}</li>
+		<li class="col06">
+			<div class="num_add">
+				<a href="javascript:;" id="add_fl" class="add fl">+</a>
+				<input type="text" maxlength="2" id="num_show_fl" class="num_show fl" value="{{ i.number }}">
+                <input type="hidden" name="cartid" value="{{ i.id }}">
+				<a href="javascript:;" id="minus_fl" class="minus fl">-</a>
+			</div>
+		</li>
+        {% load pagetag %}
+		<li class="col07" id="countprice"> {% chengjfa i.number i.bid.bkprice %}</li>
+		<li class="col08"><a href="#" class="cartdel">删除</a><input type="hidden" name="cartid"  value="{{ i.id }}"></li>
+	</ul>
+    {% endfor %}
+
+	<ul class="settlements">
+		<li class="col01"><input type="checkbox" name="checkedall" checked=""></li>
+		<li class="col02">全选</li>
+		<li class="col03">合计(不含运费)：<span>¥</span><em id="zongjia">42.60</em></li>
+		<li class="col04"><a href="{% url 'mybook_suborder' %}">去结算</a></li>
+	</ul>
+    <script>
+    //计算总价方法
+    function ToPriceAll(){
+        var count=0
+        $('input[name=checked_dj]').each(function (){
+            if ($(this).prop('checked')){
+                var num=Number($(this).parents('ul').find('#countprice').text())
+                count += num
+            }
+        })
+        $('#zongjia').text(Math.round(count * 100 )/100)
+
+    }
+    ToPriceAll()
+    //修改按钮方法
+    function Upchecked(data){
+        //ajax请求
+        $.get('{% url 'mybook_upchecked' %}',data,function (data){
+            console.log(data.msg)
+        },'json')
+        ToPriceAll()
+    }
+    $("body").on("click","#minus_fl",function (m) {
+           var obj = $(this).closest("div").find("#num_show_fl");
+           if (obj.val() <= 1) {
+                obj.val(1);
+           } else {
+                obj.val(parseInt(obj.val()) - 1);
+           }
+           obj.change();
+    });
+    $("body").on("click","#add_fl",function (m) {
+        var obj = $(this).closest("div").find("#num_show_fl");
+        obj.val(parseInt(obj.val()) + 1);
+        obj.change();
+    })
+    $("body").on("change","#num_show_fl",function (m) {
+        var obj = $(this).closest("div").find("#num_show_fl");
+        var price=$(this).closest("ul").find('#price').text()
+        var count=$(this).closest("ul").find('#countprice')
+        count.text(Math.round((parseFloat(price) * obj.val()) * 100 )/100)
+        //接收数据 准备ajax请求
+        var data={}
+        data['number']=obj.val()
+        data['cartid']=$(this).next().val()
+        $.get('{% url 'mybook_upcart' %}',data,function (data){
+            console.log(data.msg)
+        },'json')
+        ToPriceAll()
+
+    })
+    //单个选框按钮点击事件
+    $('input[type=checkbox]').click(function (){
+        var select=0
+        var data={}
+        if ($(this).prop('checked')) {
+            select=1
+        }else {
+            select=0
+        }
+        data['select']=select
+        data['cartid']=$(this).next().val()
+        Upchecked(data)
+    })
+    //全选按钮
+    $('input[name=checkedall]').click(function (){
+        var select=0
+        //获取当前选中状态
+        sel=this.checked
+        //给所有选框设置状态
+        $('input[type=checkbox]').prop('checked',sel)
+        //修改数据库是否选中属性
+        if ($(this).prop('checked')) {
+            select=1
+        }else {
+            select=0
+        }
+        var data={}
+        data['select']=select
+        Upchecked(data)
+        ToPriceAll()
+    })
+    //删除按钮
+    $('.cartdel').click(function (){
+        var data={}
+        data['cartid']=$(this).next().val()
+        //ajax请求
+        $.get('{% url 'mybook_delcart' %}',data,function (data){
+            window.location.reload()
+        },'json')
+    })
+
+    </script>
+{% endblock %}

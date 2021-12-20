@@ -1,0 +1,50 @@
+{% extends 'myadmin/base.html' %}
+{% block con %}
+    <form action="{% url 'type_update' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+<ul class="ulColumn2">
+       <li>
+        <span class="item_name"  style="width:120px;">当前分类路径:</span>
+        <span>{{ data.datalist }}</span>
+       </li>
+       <li>
+        <span class="item_name"  style="width:120px;">当前分类编号:</span>
+        <input type="text" class="textbox textbox_225" style="width: 100px" name="id" value="{{ data.id }}" readonly="readonly"/>
+       </li>
+       <li>
+        <span class="item_name"  style="width:120px;">目前父级类名:</span>
+            {% for i in data_all %}
+                {% if i.id == data.fid %}
+                    <input type="text" class="textbox textbox_225" style="width: 100px" name="old_typename" value="{{ i.typename }}" readonly="readonly"/>
+                 父类ID:<input type="text" class="textbox textbox_225" style="width: 100px" name="old_fid" value="{{ i.fid }}" readonly="readonly"/>
+                {% endif %}
+            {% endfor %}
+       </li>
+       <li>
+        <span class="item_name" style="width:120px;"> 新的的父级类名:</span>
+        <select name="fid" class="select">
+         <option value="0">顶级类</option>
+            {% for i in data_all %}
+                {% for i in data_all %}
+                {% if i.id == data.fid %}
+                    <option value="{{ i.id }}" selected>{{ i.typename }}</option>
+                {% else %}
+                    <option value="{{ i.id }}">{{ i.typename }}</option>
+                {% endif %}
+                {% endfor %}
+
+            {% endfor %}
+        </select>
+       </li>
+       <li>
+        <span class="item_name"  style="width:120px;">图书类名:</span>
+        <input type="text" class="textbox textbox_225" name="typename" value="{{ data.typename }}" placeholder="图书类名"/>
+        <span></span>
+       </li>
+       <li>
+        <span class="item_name" style="width:120px;"></span>
+        <input type="submit" class="link_btn" value="保存"/>
+       </li>
+      </ul>
+    </form>
+{% endblock %}

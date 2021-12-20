@@ -1,0 +1,96 @@
+{% extends 'myadmin/base.html' %}
+{% block con %}
+    <div class="page_title">
+       <h2 class="fl">商品管理</h2>
+
+       <a class="fr top_rt_btn">返回商品列表</a>
+    <a href="{% url 'product_add' %}" class="fr top_rt_btn add_icon">添加商品</a>
+    </div>
+
+
+        <form action="{% url 'product_index' %}">
+    <section class="mtb">
+
+       <input type="text" name="select_text" value="{{ request.GET.select_text }}" class="textbox textbox_225" placeholder="输入关键字..."/>
+       <input type="submit" value="查询" class="group_btn"/>
+      </section>
+    </form>
+      <table class="table">
+       <tr>
+        <th style="width: 50px">图书ID</th>
+        <th style="width: 70px">图书封面图</th>
+        <th style="width: 100px">图书名</th>
+        <th style="width: 150px">推荐语</th>
+        <th>简介</th>
+        <th style="width: 50px">作者</th>
+        <th style="width: 120px">出版社</th>
+        <th style="width: 100px">出版时间</th>
+        <th style="width: 50px">图书价格</th>
+        <th style="width: 120px">图书种类</th>
+        <th style="width: 150px">操作</th>
+       </tr>
+       {% for i in data %}
+       <tr>
+        <td class="center">{{ i.id }} </td>
+        <td class="center"><img src="/{{ i.booksimgs_set.first.imgurl }}" width="50" height="50"/></td>
+        <td class="center">{{ i.bkname }}</td>
+        <td class="center" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;">{{ i.bkreco }}</td>
+        <td class="center" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;">{{ i.bkbrief }}</td>
+        <td class="center">{{ i.bkauthor }}</td>
+        <td class="center" style="white-space: nowrap;text-overflow: ellipsis;overflow: hidden;">{{ i.bkpress }}</td>
+        <td class="center">{{ i.bktime|date:'Y-m-d' }}</td>
+        <td class="center">{{ i.bkprice }}</td>
+        <td class="center" style="overflow: hidden;text-overflow: ellipsis">
+            {% for y in i.bktypeid.all %}
+                {{ y.typename }}
+            {% endfor %}
+            
+        </td>
+        <td class="center">
+         <button type="button" class="btn btn-warning">
+
+             <a href="{% url 'product_update' %}?id={{ i.id }}" title="修改" style="color: white">修改</a>
+         </button>
+         <button type="button" class="btn btn-danger">
+
+             <a href="#" id="delete" title="删除" class="delete_ajax" style="color: white">删除</a>
+         </button>
+
+        </td>
+       </tr>
+      {% endfor %}
+      </table>
+      <aside class="paging">
+        <div class="center">共{{ data.paginator.count }}条数据::::共{{ data.paginator.num_pages }}页</div>
+        <div class="center">当前:{{ data.number }}页</div>
+          <div class="center">
+              {% load pagetag %}
+              {% if data.has_previous %}
+                <a href="?page=1&select={{ select }}&select_text={{ select_text }}">&laquo; 首页</a>
+                <a href="?page={{ data.previous_page_number }}&select={{ select }}&select_text={{ select_text }}">上一页</a>
+              {% endif %}
+                    {% comment %}{% for i in data.paginator.page_range %}
+                        <a href="{% url 'meber_index' %}?page={{ i }}">{{ i }}</a>
+                    {% endfor %}{% endcomment %}
+                    {% showpage data.paginator.num_pages request %}
+              {% if data.has_next %}
+                <a href="?page={{ data.next_page_number }}&select={{ select }}&select_text={{ select_text }}">下一页</a>
+                <a href="?page={{ data.paginator.num_pages }}&select={{ select }}&select_text={{ select_text }}">尾页 &raquo;</a>
+              {% endif %}
+
+          </div>
+      </aside>
+<script>
+    $('.delete_ajax').click(function(){
+        id=$(this).parents('tr').find('td:first').text()
+        a=$(this)
+        flag = confirm("确定删除ID为:"+id+"的图书信息吗?")
+        if (flag)
+            $.get('{% url 'product_delete' %}',{'id':id},function (data){
+            if (data['code']==0)
+                window.location.reload()
+            alert(data['msg'])
+            },'json')
+    })
+</script>
+{% endblock %}

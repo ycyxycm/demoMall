@@ -1,0 +1,97 @@
+{% extends 'myadmin/base.html' %}
+{% block con %}
+
+    <div class="page_title">
+       <h2 class="fl">会员管理</h2>
+       <a href="{% url 'meber_add' %}" class="fr top_rt_btn add_icon">添加商品</a>
+       <a class="fr top_rt_btn">返回产品列表</a>
+    </div>
+    <form action="{% url 'meber_index' %}">
+    <section class="mtb">
+       <select name="select" class="select">
+        <option value="select_all" {% if select == 'select_all' %}selected{% endif %} >所有</option>
+        <option value="select_nikename" {% if select == 'select_nikename' %}selected{% endif %}>昵称</option>
+        <option value="select_sex" {% if select == 'select_sex' %}selected{% endif %}>性别</option>
+        <option value="select_phone" {% if select == 'select_phone' %}selected{% endif %}>手机号</option>
+        <option value="select_address" {% if select == 'select_address' %}selected{% endif %}>居住地址</option>
+        <option value="select_usertype" {% if select == 'select_usertype' %}selected{% endif %}>身份</option>
+    </select>
+       <input type="text" name="select_text" value="{{ request.GET.select_text }}" class="textbox textbox_225" placeholder="输入关键字..."/>
+       <input type="submit" value="查询" class="group_btn"/>
+      </section>
+    </form>
+      <table class="table">
+       <tr>
+        <th style="width: 50px">会员ID</th>
+        <th>头像</th>
+        <th>昵称</th>
+        <th>性别</th>
+        <th>身份</th>
+        <th>手机号</th>
+        <th>密码</th>
+        <th>居住地址</th>
+        <th>操作</th>
+       </tr>
+       {% for i in data %}
+       <tr>
+        <td class="center">{{ i.id }}</td>
+        <td class="center"><img src="{{ i.face }}" width="50" height="50"/></td>
+        <td class="center">{{ i.nikename }}</td>
+        <td class="center">
+        {% if i.sex == '1' %}
+            男
+        {% elif i.sex == '0' %}
+            女
+        {% endif %}</td>
+        <td class="center">{{ i.usertype }}</td>
+        <td class="center">{{ i.phone }}</td>
+        <td class="center" style="overflow: hidden;text-overflow: ellipsis">{{ i.password }}</td>
+        <td class="center">{{ i.homeaddress }}</td>
+        <td class="center">
+         <button type="button" class="btn btn-warning">
+
+             <a href="{% url 'meber_update' %}?id={{ i.id }}" title="修改" style="color: white">修改</a>
+         </button>
+         <button type="button" class="btn btn-danger">
+
+             <a href="#" id="delete" title="删除" class="delete_ajax" style="color: white">删除</a>
+         </button>
+
+        </td>
+       </tr>
+      {% endfor %}
+      </table>
+      <aside class="paging">
+        <div class="center">共{{ data.paginator.count }}条数据::::共{{ data.paginator.num_pages }}页</div>
+        <div class="center">当前:{{ data.number }}页</div>
+          <div class="center">
+              {% load pagetag %}
+              {% if data.has_previous %}
+                <a href="?page=1&select={{ select }}&select_text={{ select_text }}">&laquo; 首页</a>
+                <a href="?page={{ data.previous_page_number }}&select={{ select }}&select_text={{ select_text }}">上一页</a>
+              {% endif %}
+                    {% comment %}{% for i in data.paginator.page_range %}
+                        <a href="{% url 'meber_index' %}?page={{ i }}">{{ i }}</a>
+                    {% endfor %}{% endcomment %}
+                    {% showpage data.paginator.num_pages request %}
+              {% if data.has_next %}
+                <a href="?page={{ data.next_page_number }}&select={{ select }}&select_text={{ select_text }}">下一页</a>
+                <a href="?page={{ data.paginator.num_pages }}&select={{ select }}&select_text={{ select_text }}">尾页 &raquo;</a>
+              {% endif %}
+
+          </div>
+      </aside>
+<script>
+    $('.delete_ajax').click(function(){
+        id=$(this).parents('tr').find('td:first').text()
+        a=$(this)
+        flag = confirm("确定删除ID为:"+id+"的会员账户吗?")
+        if (flag)
+            $.get('{% url 'meber_delete' %}',{'id':id},function (data){
+            if (data['code']==0)
+                window.location.reload()
+            alert(data['msg'])
+            },'json')
+    })
+</script>
+{% endblock %}

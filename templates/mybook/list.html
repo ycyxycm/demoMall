@@ -1,0 +1,128 @@
+{% extends 'mybook/base1.html' %}
+{% block base1 %}
+    <div class="search_bar clearfix">
+		<a href="{% url 'mybook_index' %}" class="logo fl"><img src="../../static/mybook/images/logo.png"></a>
+        <form action="{% url 'mybook_list' %}{% if request.GET.typeid != None %}?typeid={{ request.GET.typeid }}{% endif %} ">
+            {% csrf_token %}
+		<div class="search_con fl">
+			<input type="text" class="input_text fl" {% if text_select != None %}value="{{ text_select }}" {% endif %} name="text_select" placeholder="搜索书名关键字">
+			<input type="submit" class="input_btn fr" name="" value="搜索">
+		</div>
+        </form>
+		<div class="guest_cart fr">
+			<a href="#" class="cart_name fl">我的购物车</a>
+			<div class="goods_count fl">1</div>
+		</div>
+	</div>
+
+	<div class="navbar_con">
+		<div class="navbar clearfix">
+			<div class="subnav_con fl">
+				<h1>全部商品分类</h1>
+				<ul class="subnav">
+                    {% for i in data  %}
+                        <li><a href="{% url 'mybook_list' %}?typeid={{ i.id }}" >{{ i.typename }}</a></li>
+
+                    {% endfor %}
+				</ul>
+			</div>
+{#			<ul class="navlist fl">#}
+{#				<li><a href="">首页</a></li>#}
+{#				<li class="interval">|</li>#}
+{#				<li><a href="">手机生鲜</a></li>#}
+{#				<li class="interval">|</li>#}
+{#				<li><a href="">抽奖</a></li>#}
+{#			</ul>#}
+		</div>
+	</div>
+
+	<div class="breadcrumb">
+		<a href="{% url 'mybook_list' %}">全部分类</a>
+		<span>></span>
+        {% if path == '' %}
+
+        {% else %}
+            {% for y in path %}
+                <a href="{% url 'mybook_list' %}?typeid={{ y.id }}">{{ y.typename }}</a>
+                <span>></span>
+            {% endfor %}
+        {% endif %}
+
+	</div>
+
+	<div class="main_wrap clearfix">
+		<div class="l_wrap fl clearfix">
+			<div class="new_goods">
+				<h3>新品推荐</h3>
+				<ul>
+					<li>
+						<a href="{% url 'mybook_info' %}?id={{ newbk.id }}"><img src="{{ newbk.booksimgs_set.first.imgurl }}"></a>
+						<h4><a href="{% url 'mybook_info' %}?id={{ newbk.id }}">{{ newbk.bkname }}</a></h4>
+						<div class="prize">￥{{ newbk.bkprice }}</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="r_wrap fr clearfix">
+			<div class="sort_bar">
+				<a href="#" class="active">默认</a>
+				<a href="#">价格</a>
+			</div>
+
+            {% for i in bkdata %}
+
+			<ul class="goods_type_list clearfix">
+
+				<li>
+					<a href="{% url 'mybook_info' %}?id={{ i.id }}"><img style="height: 180px;width: 180px;" src="{{ i.booksimgs_set.first.imgurl }}"></a>
+					<h4><a href="{% url 'mybook_info' %}?id={{ i.id }}">{{ i.bkname }}</a></h4>
+					<div class="operate">
+						<span class="prize">￥{{ i.bkprice }}</span>
+						<span class="unit">{{ i.bkauthor }}</span>
+						<a href="#" class="add_goods" title="加入购物车"></a>
+					</div>
+				</li>
+                {% endfor %}
+			</ul>
+
+
+            <center><div >当前:{{ bkdata.number }}页</div></center>
+			<div class="pagenation">
+            {% if request.GET.typeid == None %}
+{#                有图书分类条件#}
+                {% if bkdata.has_previous %}
+                <a href="{% url 'mybook_list' %}?page=1{% if text_select != None %}&text_select={{ text_select }}{% endif %}">&laquo; 首页</a>
+                <a href="{% url 'mybook_list' %}?page={{ bkdata.previous_page_number }}{% if text_select != None %}&text_select={{ text_select }}{% endif %}">上一页</a>
+                {% endif %}
+
+                {% for i in bkdata.paginator.page_range %}
+                    <a href="{% url 'mybook_list' %}?page={{ i }}{% if text_select != None %}&text_select={{ text_select }}{% endif %}">{{ i }}</a>
+                {% endfor %}
+
+                {% if bkdata.has_next %}
+                    <a href="?page={{ bkdata.next_page_number }}{% if text_select != None %}&text_select={{ text_select }}{% endif %}">下一页</a>
+                    <a href="?page={{ bkdata.paginator.num_pages }}{% if text_select != None %}&text_select={{ text_select }}{% endif %}">尾页 &raquo;</a>
+                {% endif %}
+
+            {% else %}
+{#                无图书分类条件#}
+                {% if bkdata.has_previous %}
+                <a href="{% url 'mybook_list' %}?page=1&typeid={{ request.GET.typeid }}{% if text_select != None %}&text_select={{ text_select }}{% endif %}">&laquo; 首页</a>
+                <a href="{% url 'mybook_list' %}?page={{ bkdata.previous_page_number }}&typeid={{ request.GET.typeid }}{% if text_select != None %}&text_select={{ text_select }}{% endif %}">上一页</a>
+                {% endif %}
+
+                {% for i in bkdata.paginator.page_range %}
+                    <a href="{% url 'mybook_list' %}?page={{ i }}&typeid={{ request.GET.typeid }}{% if text_select != None %}&text_select={{ text_select }}{% endif %}">{{ i }}</a>
+                {% endfor %}
+
+                {% if bkdata.has_next %}
+                    <a href="?page={{ bkdata.next_page_number }}&typeid={{ request.GET.typeid }}{% if text_select != None %}&text_select={{ text_select }}{% endif %}">下一页</a>
+                    <a href="?page={{ bkdata.paginator.num_pages }}&typeid={{ request.GET.typeid }}{% if text_select != None %}&text_select={{ text_select }}{% endif %}">尾页 &raquo;</a>
+                {% endif %}
+            {% endif %}
+			</div>
+            <center><div>共{{ bkdata.paginator.count }}条数据::::共{{ bkdata.paginator.num_pages }}页</div></center>
+		</div>
+	</div>
+{% endblock %}

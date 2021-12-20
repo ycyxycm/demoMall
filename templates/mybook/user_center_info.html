@@ -1,0 +1,28 @@
+{% extends 'mybook/base1.html' %}
+{% block base1 %}
+<div class="search_bar clearfix">
+		<a href="index.html" class="logo fl"><img src="../../static/mybook/images/logo02.png"></a>
+		<div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;用户中心</div>
+	</div>
+	<div class="main_con clearfix">
+		<div class="left_menu_con clearfix">
+			<h3>用户中心</h3>
+			<ul>
+				<li><a href="{% url 'mybook_usercenterinfo' %}" class="active">· 个人信息</a></li>
+				<li><a href="{% url 'mybook_orderlist' %}">· 全部订单</a></li>
+				<li><a href="{% url 'mybook_receaddress' %}">· 收货地址</a></li>
+			</ul>
+		</div>
+		<div class="right_content clearfix">
+				<div class="info_con clearfix">
+				<h3 class="common_title2">基本信息</h3>
+						<ul class="user_info_list">
+							<li><span>手机号：</span>{{ data.phone }}</li>
+							<li><span>昵称：</span>{{ data.nikename }}</li>
+							<li><span>联系地址：</span>{{ data.homeaddress }}</li>
+						</ul>
+				</div>
+		</div>
+		</div>
+	</div>
+{% endblock %}

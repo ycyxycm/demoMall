@@ -1,0 +1,67 @@
+{% extends 'mybook/base1.html' %}
+{% block base1 %}
+<h3 class="common_title">确认收货地址</h3>
+    <form method="post" action="{% url 'mybook_suborder' %}">
+    {% csrf_token %}
+	<div class="common_list_con clearfix">
+        {% for i in receaddress %}
+		<dl>
+			<dt>寄送到：</dt>
+			<dd><input type="radio" value="{{ i.id }}" name="receid" {% if i.receselect == 1 %}checked{% endif %}  }>{{ i.receaddress}} （{{ i.recename }} 收） 手机号:{{ i.recephone}}</dd>
+		</dl>
+        {% endfor %}
+	</div>
+
+	<h3 class="common_title">支付方式</h3>
+	<div class="common_list_con clearfix">
+		<div class="pay_style_con clearfix">
+			<input type="radio" value="0" name="paymethod" checked>
+			<label class="cash">货到付款</label>
+			<input type="radio" value="1" name="paymethod">
+			<label class="weixin">微信支付</label>
+			<input type="radio" value="2" name="paymethod">
+			<label class="zhifubao"></label>
+			<input type="radio" value="3" name="paymethod">
+			<label class="bank">银行卡支付</label>
+		</div>
+	</div>
+
+	<h3 class="common_title">商品列表</h3>
+
+	<div class="common_list_con clearfix">
+		<ul class="goods_list_th clearfix">
+			<li class="col01">商品名称</li>
+			<li class="col02">商品作者</li>
+			<li class="col03">商品价格</li>
+			<li class="col04">数量</li>
+			<li class="col05">小计</li>
+		</ul>
+        {% for i in data %}
+            <ul class="goods_list_td clearfix">
+                <li class="col01">1</li>
+                <li class="col02"><img src="{{ i.bid.booksimgs_set.first.imgurl }}"></li>
+                <li class="col03">{{ i.bid.bkname }}</li>
+                <li class="col04">{{ i.bid.bkauthor }}</li>
+                <li class="col05">{{ i.bid.bkprice}}</li>
+                <li class="col06">{{ i.number }}</li>
+                {% load pagetag %}
+                <li class="col07">{% chengjfa i.number i.bid.bkprice %}</li>
+            </ul>
+        {% endfor %}
+	</div>
+
+	<h3 class="common_title">总金额结算</h3>
+
+	<div class="common_list_con clearfix">
+		<div class="settle_con">
+			<div class="total_goods_count">共<em>{{ data.count }}</em>件商品，总金额<b>{{ countprice}}</b></div>
+			<div class="transit">运费：<b>包邮</b></div>
+			<div class="total_pay">实付款：<b>{{countprice}}</b></div>
+		</div>
+	</div>
+    <input type="hidden" name="price"  value="{{ countprice }}">
+	<div class="order_submit clearfix">
+        <button type="submit"><a id="order_btn">提交订单</a></button>
+	</div>
+    </form>
+{% endblock %}

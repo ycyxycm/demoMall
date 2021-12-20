@@ -1,0 +1,156 @@
+{% extends 'mybook/base1.html' %}
+
+{% block base1 %}
+	<div class="navbar_con">
+		<div class="navbar clearfix">
+			<div class="subnav_con fl">
+				<h1>全部商品分类</h1>
+				<span></span>
+				<ul class="subnav">
+					{% for i in data  %}
+                        <li><a href="{% url 'mybook_list' %}?typeid={{ i.id }}" >{{ i.typename }}</a></li>
+                    {% endfor %}
+				</ul>
+			</div>
+			<ul class="navlist fl">
+				<li><a href="" id="sy">首页</a></li>
+				<li class="interval">|</li>
+				<li><a href="">手机生鲜</a></li>
+				<li class="interval">|</li>
+				<li><a href="">抽奖</a></li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="breadcrumb">
+		<a href="{% url 'mybook_list' %}">全部分类</a>
+		<span>></span>
+            {% for y in obj.bktypeid.all %}
+                <a href="{% url 'mybook_list' %}?typeid={{ y.id }}">{{ y.typename }}</a>
+                <span>></span>
+            {% endfor %}
+                <a href="#">{{ obj.bkname }}</a>
+	</div>
+
+	<div class="goods_detail_con clearfix">
+		<div class="goods_detail_pic fl"><img style="width: 350px;height: 350px" src="{{ obj.booksimgs_set.first.imgurl }}"></div>
+
+		<div class="goods_detail_list fr">
+			<h3>{{ obj.bkname }}</h3>
+			<p>{{ obj.bkreco }}</p>
+			<div class="prize_bar">
+				<span class="show_pirze">¥<em id="price">{{ obj.bkprice }}</em></span>
+				<span class="show_unit">作  者：{{ obj.bkauthor }}</span>
+			</div>
+			<div class="goods_num clearfix">
+                <ul class="btn-numbox">
+                    <li><span class="number">数量:</span></li>
+                    <li>
+                        <ul class="count">
+                            <li><span id="num-jian" class="num-jian">-</span></li>
+                            <li><input type="text" class="input-num" name="input-num" id="input-num" value="1" /></li>
+                            <li><span id="num-jia" class="num-jia">+</span></li>
+                        </ul>
+                    </li>
+　　　             </ul>
+			</div>
+			<div class="operate_btn">
+				<a href="javascript:;" class="buy_btn">立即购买</a>
+				<a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="main_wrap clearfix">
+		<div class="l_wrap fl clearfix">
+			<div class="new_goods">
+				<h3>新品推荐</h3>
+				<ul>
+                    {% for i in newbk %}
+                    <li>
+						<a href="{% url 'mybook_info' %}?id={{ i.id }}"><img src="{{ i.booksimgs_set.first.imgurl }}"></a>
+						<h4><a href="{% url 'mybook_info' %}?id={{ i.id }}">{{ i.bkname }}</a></h4>
+						<div class="prize">￥{{ i.bkprice }}</div>
+					</li>
+                    {% endfor %}
+				</ul>
+			</div>
+		</div>
+
+		<div class="r_wrap fr clearfix">
+			<ul class="detail_tab clearfix">
+				<li class="active">商品介绍</li>
+			</ul>
+
+			<div class="tab_content">
+				<dl>
+					<dt>商品详情：</dt>
+					<dd>{{ obj.bkbrief}}</dd>
+				</dl>
+			</div>
+		</div>
+	</div>
+    {% csrf_token %}
+    <script>
+    var csrftoken=$("[name=csrfmiddlewaretoken]").val();
+    $('#add_cart').click(function (){
+        //先检测用户是否登录
+        var user='{{ request.session.myuser.id }}'
+        if (user){
+            //已经登录
+            //获取当前商品id和数量
+            var data={}
+            data.bid={{ obj.id }}
+            data.number=$('input[name=input-num]').val()
+            data.csrfmiddlewaretoken=csrftoken
+            $.post('{% url 'mybook_addcart' %}',data,function (data){
+                if (data.code == 0){
+                    alert(data.msg)
+                }else {
+                    alert(data.msg)
+                }
+            },'json')
+        }else {
+            //未登录
+            alert('请先登录')
+            location.href="{% url 'mybook_login' %}"
+        }
+    })
+    $("body").on("click",".num-jian",function (m) {
+           var obj = $(this).closest("ul").find(".input-num");
+           if (obj.val() <= 1) {
+                obj.val(1);
+           } else {
+                obj.val(parseInt(obj.val()) - 1);
+           }
+           obj.change();
+     });
+     $("body").on("click",".num-jia",function (m) {
+           var obj = $(this).closest("ul").find(".input-num");
+           obj.val(parseInt(obj.val()) + 1);
+           obj.change();
+     })
+
+    </script>
+{% endblock %}
+{#	<script type="text/javascript" src="js/jquery-1.12.2.js"></script>#}
+{#	<script type="text/javascript">#}
+{#		var $add_x = $('#add_cart').offset().top;#}
+{#		var $add_y = $('#add_cart').offset().left;#}
+{##}
+{#		var $to_x = $('#show_count').offset().top;#}
+{#		var $to_y = $('#show_count').offset().left;#}
+{##}
+{#		$(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'})#}
+{#		$('#add_cart').click(function(){#}
+{#			$(".add_jump").stop().animate({#}
+{#				'left': $to_y+7,#}
+{#				'top': $to_x+7},#}
+{#				"fast", function() {#}
+{#					$(".add_jump").fadeOut('fast',function(){#}
+{#						$('#show_count').html(2);#}
+{#					});#}
+{##}
+{#			});#}
+{#		})#}
+{#	</script>#}

@@ -1,0 +1,92 @@
+{% extends 'myadmin/base.html' %}
+{% block con %}
+    <div class="page_title">
+       <h2 class="fl">分类管理</h2>
+       <a href="{% url 'type_add' %}" class="fr top_rt_btn add_icon">添加分类</a>
+       <a class="fr top_rt_btn">返回分类列表</a>
+    </div>
+   <form action="{% url 'type_index' %}">
+    <section class="mtb">
+       <select name="select" class="select">
+        <option value="select_all" {% if request.GET.select == 'select_all' %}selected{% endif %} >所有</option>
+        <option value="select_fid" {% if request.GET.select == 'select_fid' %}selected{% endif %}>图书父级类名</option>
+    </select>
+
+    <select name="select_text" class="select">
+         <option value="-1">请先选前面的条件</option>
+         <option value=0 {% if select_text == 0 %}selected{% endif %}>顶级类</option>
+            {% for i in data_list %}
+                <option {% if select_text == i.id %}selected{% endif %} value={{ i.id }}>{{ i.typename }}</option>
+            {% endfor %}
+    </select>
+       <input type="submit" value="查询" class="group_btn"/>
+      </section>
+    </form>
+      <table class="table">
+       <tr>
+        <th>图书分类ID</th>
+        <th>图书分类名</th>
+        <th>父级类名</th>
+        <th>分类路径</th>
+        <th>操作</th>
+       </tr>
+       {% for i in data %}
+       <tr>
+        <td class="center">{{ i.id }}</td>
+        <td><span>{{ i.sj }}</span>{{ i.typename }}</td>
+        <td class="center">
+            {% if i.fid == 0 %}
+                顶级分类
+            {% else %}
+                {{ i.fname }}{% comment %}{{ i.fid }}{% endcomment %}
+            {% endif %}
+
+        </td>
+        <td class="center">{{ i.datalist }}{% comment %}{{ i.path }}{% endcomment %}</td>
+        <td class="center">
+         <button type="button" class="btn btn-warning">
+
+             <a href="{% url 'type_update' %}?id={{ i.id }}" title="修改" style="color: white">修改</a>
+         </button>
+         <button type="button" class="btn btn-danger">
+
+             <a href="#" id="delete" title="删除" class="delete_ajax" style="color: white">删除</a>
+         </button>
+
+        </td>
+       </tr>
+      {% endfor %}
+      </table>
+      <aside class="paging">
+        <div class="center">共{{ data.paginator.count }}条数据::::共{{ data.paginator.num_pages }}页</div>
+        <div class="center">当前:{{ data.number }}页</div>
+          <div class="center">
+              {% load pagetag %}
+
+
+              {% if data.has_previous %}
+                <a href="?page=1">&laquo; 首页</a>
+                <a href="?page={{ data.previous_page_number }}">上一页</a>
+              {% endif %}
+                    {% showpage data.paginator.num_pages request %}
+              {% if data.has_next %}
+                <a href="?page={{ data.next_page_number }}">下一页</a>
+                <a href="?page={{ data.paginator.num_pages }}">尾页 &raquo;</a>
+              {% endif %}
+
+          </div>
+      </aside>
+<script>
+    $('.delete_ajax').click(function(){
+        id=$(this).parents('tr').find('td:first').text()
+        a=$(this)
+        flag = confirm("确定删除ID为:"+id+"的图书类型吗?")
+        if (flag)
+            $.get('{% url 'type_delete' %}',{'id':id},function (data){
+            if (data['code']==0)
+                window.location.reload()
+            alert(data['msg'])
+            },'json')
+    })
+</script>
+{% endblock %}

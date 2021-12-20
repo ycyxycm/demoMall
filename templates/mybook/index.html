@@ -1,0 +1,75 @@
+{% extends 'mybook/base1.html' %}
+{% block base1 %}
+    <div class="navbar_con">
+		<div class="navbar">
+			<h1 class="fl">全部商品分类</h1>
+			<ul class="navlist fl">
+				<li><a href="{% url 'mybook_list' %}">所有商品列表</a></li>
+				<li class="interval">|</li>
+				<li><a href="">手机生鲜</a></li>
+				<li class="interval">|</li>
+				<li><a href="">抽奖</a></li>
+			</ul>
+		</div>
+	</div>
+
+	<div class="center_con clearfix">
+		<ul class="subnav fl">
+            {% for i in data  %}
+                <li><a href="#{{ i }}" >{{ i.typename }}</a></li>
+            {% endfor %}
+{#			<li><a href="#model01" >小说类型图书</a></li>#}
+{#			<li><a href="#model02" >历史类型图书</a></li>#}
+{#			<li><a href="#model03" >保健养生类型图书</a></li>#}
+{#			<li><a href="#model04" >教育类型图书</a></li>#}
+{#			<li><a href="#model05" >小说类型图书</a></li>#}
+{#			<li><a href="#model06" >小说类型图书</a></li>#}
+		</ul>
+		<div class="slide fl">
+			<ul class="slide_pics">
+				<li><img src="../../static/mybook/images/slide.jpg" alt="幻灯片"></li>
+				<li><img src="../../static/mybook/images/slide02.jpg" alt="幻灯片"></li>
+				<li><img src="../../static/mybook/images/slide03.jpg" alt="幻灯片"></li>
+				<li><img src="../../static/mybook/images/slide04.jpg" alt="幻灯片"></li>
+			</ul>
+			<div class="prev"></div>
+			<div class="next"></div>
+			<ul class="points"></ul>
+		</div>
+		<div class="adv fl">
+			<a href="#"><img src="../../static/mybook/images/adv01.jpg"></a>
+			<a href="#"><img src="../../static/mybook/images/adv02.jpg"></a>
+		</div>
+	</div>
+    {% for i in data %}
+	<div class="list_model">
+		<div class="list_title clearfix">
+			<h3 class="fl" id="{{ i }}">{{ i.typename }}</h3>
+			<div class="subtitle fl">
+				<span>|</span>
+                {% for y in i.data_son %}
+                    <a href="{% url 'mybook_list' %}?typeid={{ y.id }}">{{ y.typename }}</a>
+                {% endfor %}
+			</div>
+			<a href="{% url 'mybook_list' %}?typeid={{ i.id }}" class="goods_more fr" id="fruit_more">查看更多 ></a>
+		</div>
+
+
+		<div class="goods_con clearfix">
+			<div class="goods_banner fl"><img src="../../static/mybook/images/banner0{{ forloop.counter }}.jpg"></div>
+			<ul class="goods_list fl">
+                {% for z in i.books_set.all %}
+                {% if forloop.counter < 5 %}
+                <li>
+					<h4><a href="#">{{ z.bkname }}</a></h4>
+					<a href="{% url 'mybook_info' %}?id={{ z.id }}"><img src="{{ z.booksimgs_set.first.imgurl }}"></a>
+					<div class="prize">¥{{ z.bkprice }}</div>
+				</li>
+                {% endif %}
+                {% endfor %}
+			</ul>
+		</div>
+	    </div>
+
+    {% endfor %}
+{% endblock %}
