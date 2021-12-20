@@ -106,11 +106,13 @@ def userregister(request):
         data={}
         data['phone']=request.POST.get('phone')
         data['password']=request.POST.get('password')
+
         # 删除token
-        data.pop('csrfmiddlewaretoken')
+        # data.pop('csrfmiddlewaretoken')
         #从session中获取phone以及vcode
-        phone = request.session.get('vcodes').phone
-        vcode = request.session.get('vcodes').vcode
+        sessions=request.session.get('vcodes')
+        phone = sessions['phone']
+        vcode = sessions['vcode']
         #验证手机号以及验证码
         if data['phone']!=phone and data['vcode']!=vcode:
             return HttpResponse(f'<script>alert("手机号码或验证码有错误!");history.back(); </script>')
@@ -161,7 +163,7 @@ def sendcoke(request):
     #调用发送短信方法
     # res=coke(phone,vcode)
     if True:
-        return JsonResponse({'code': 0, 'msg': '短信验证码已发送!', 'vcode': vcode})
+        return JsonResponse({'code': 0, 'msg': '短信验证码已发送!', 'vcode': 123456})
     # else:
     #     return JsonResponse({'code': 2, 'msg': '短信验证码发送失败,请重试', 'vcode': ''})
 

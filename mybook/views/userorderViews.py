@@ -35,13 +35,13 @@ def submitorder(request):
     elif request.method=='POST':#订单进行提交创建订单
         # 验证用户是否有收货地址
         address = models.ReceivingAddress.objects.filter(uid=userobj).count()
-        print(address)
         if not address:
             url = reverse('mybook_receaddress')
             return HttpResponse(f'<script>alert("请先在用户中心添加收货地址!");location.href="' + url + '" </script>')
 
         #接收post表单提交的数据
         data=request.POST.dict()
+
         # 删除token
         data.pop('csrfmiddlewaretoken')
         # try:
@@ -50,7 +50,11 @@ def submitorder(request):
         #2.创建订单对象
         data_oroder={}
         data_oroder['uid']=userobj
-        data_oroder['receid']=models.ReceivingAddress.objects.get(id=data['receid'])
+        try:
+            data_oroder['receid']=models.ReceivingAddress.objects.get(id=data['receid'])
+        except:
+            url = reverse('mybook_receaddress')
+            return HttpResponse(f'<script>alert("请选择默认收货地址!");location.href="' + url + '" </script>')
         data_oroder['paymethod']=data['paymethod']
         new_orderobj=models.Order(**data_oroder)
         new_orderobj.save()
