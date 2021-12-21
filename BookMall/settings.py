@@ -152,9 +152,9 @@ ALIPAY_APPID = "2021000118672860"
 
 # 网关
 # 沙箱网关，生产环境须更改为正式网关。
-ALIPAY_URL = "https://openapi.alipaydev.com/gateway.do"
+# ALIPAY_URL = "https://openapi.alipaydev.com/gateway.do"
 # 正式网关，开发环境勿使用。
-# ALIPAY_URL = "https://openapi.alipay.com/gateway.do"
+ALIPAY_URL = "https://openapi.alipay.com/gateway.do"
 
 # 回调通知地址
 ALIPAY_NOTIFY_URL = "http://46j1316n83.zicp.vip/pay_result"
