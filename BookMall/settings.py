@@ -59,7 +59,7 @@ MIDDLEWARE = [
     #中间件admin
     'myadmin.AdminMiddleware.AdminLoginMiddleware',
     #中间件Book
-    'mybook.BookMiddleware.BookLoginMiddleware',
+    # 'mybook.BookMiddleware.BookLoginMiddleware',
 ]
 
 ROOT_URLCONF = 'BookMall.urls'
@@ -152,15 +152,15 @@ ALIPAY_APPID = "2021000118672860"
 
 # 网关
 # 沙箱网关，生产环境须更改为正式网关。
-# ALIPAY_URL = "https://openapi.alipaydev.com/gateway.do"
+ALIPAY_URL = "https://openapi.alipaydev.com/gateway.do"
 # 正式网关，开发环境勿使用。
-ALIPAY_URL = "https://openapi.alipay.com/gateway.do"
+# ALIPAY_URL = "https://openapi.alipay.com/gateway.do"
 
 # 回调通知地址
-ALIPAY_NOTIFY_URL = "http://46j1316n83.zicp.vip/pay_result"
+ALIPAY_NOTIFY_URL = "http://127.0.0.1:8000/pay_result"
 
 # 支付后的跳转地址
-ALIPAY_RETURN_URL = 'http://46j1316n83.zicp.vip/orderlist'
+ALIPAY_RETURN_URL = 'http://127.0.0.1:8000/orderlist'
 
 # 应用私钥
 APP_PRIVATE_KEY_PATH = os.path.join(BASE_DIR, 'keys/rsa_private_key.txt')

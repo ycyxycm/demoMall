@@ -152,7 +152,6 @@ def pay_result(request):
 # 发起支付请求
 def order_pay_request(orderobj,count):
     #商品简单描述
-    print(orderobj.orderinfo_set.first().bid.bkname)
     #交易金额
     # 获取支付对象
     alipay = Get_AliPay_Object()
@@ -160,7 +159,8 @@ def order_pay_request(orderobj,count):
     query_params = alipay.direct_pay(
         subject=orderobj.orderinfo_set.first().bid.bkname,  # 商品简单描述
         out_trade_no=orderobj.id,  # 用户购买的商品订单号
-        total_amount=count,  # 交易金额(单位: 元 保留俩位小数)
+        total_amount=1,  # 交易金额(单位: 元 保留俩位小数)
+        return_url=settings.ALIPAY_RETURN_URL,
     )
 
     # 支付宝网关地址（沙箱应用）
@@ -169,10 +169,6 @@ def order_pay_request(orderobj,count):
     print('正在发起支付请求...')
     # 页面重定向到支付页面
     return HttpResponseRedirect(pay_url)
-
-
-
-
 
 # 支付宝对象创建方法
 from BookMall import settings
